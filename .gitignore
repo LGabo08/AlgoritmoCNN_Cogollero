@@ -1,0 +1,44 @@
+# ==== Entorno virtual ====
+.venv/
+venv/
+
+# ==== Archivos de bytecode y cache de Python ====
+__pycache__/
+*.py[cod]
+*$py.class
+
+# ==== Paquetes instalados ====
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# ==== Variables de entorno ====
+.env
+.env.*.local
+.env.local
+
+# ==== Modelos pesados (usar Git LFS) ====
+# Si no usas LFS, déjalos fuera y súbelos a un storage externo
+modelo/*.h5
+
+# ==== IDEs y editores ====
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# ==== Logs y temporales ====
+*.log
+*.tmp
+*.temp
+tmp/
+*.bak
+*.swp
+
+# ==== Otros ====
+.DS_Store
+Thumbs.db
