@@ -1,0 +1,37 @@
+# ======================================================
+# 1) Finales de línea: normalización para texto
+# ======================================================
+# Detecta automáticamente archivos de texto y aplica LF internamente
+* text=auto
+
+# Force LF en Python y archivos de configuración
+*.py     text eol=lf
+*.md     text eol=lf
+*.yml    text eol=lf
+*.yaml   text eol=lf
+*.json   text eol=lf
+*.csv    text eol=lf
+
+# ======================================================
+# 2) Archivos de modelo grandes: Git LFS
+# ======================================================
+# Toda tu carpeta de modelos .h5 irá por LFS
+modelo/*.h5 filter=lfs diff=lfs merge=lfs -text
+
+# ======================================================
+# 3) Binarios: marca otros formatos comunes
+# ======================================================
+# Evita diffs en binarios
+*.png    binary
+*.jpg    binary
+*.jpeg   binary
+*.gif    binary
+*.ico    binary
+*.pdf    binary
+
+# ======================================================
+# 4) Opcionales: editoriales / entornos
+# ======================================================
+# No afectan al código, pero te ayudan a normalizar:
+.vscode/**    text=auto
+.idea/**      text=auto
