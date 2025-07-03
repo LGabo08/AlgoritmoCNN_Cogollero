@@ -1,36 +1,35 @@
 # 1. Base oficial de Python
 FROM python:3.10-slim
 
-# 2. Instala dependencias APT y Git LFS
+# 2. Instala dependencias APT mínimas
 RUN apt-get update \
  && apt-get install -y --no-install-recommends \
      ca-certificates \
      curl \
-     git \
-     apt-transport-https \
- && \
- # Instala Git LFS siguiendo las instrucciones oficiales
- curl -fsSL https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh \
-   | bash \
- && apt-get install -y --no-install-recommends git-lfs \
- && git lfs install \
  && rm -rf /var/lib/apt/lists/*
 
-# 3. Copia tu código
+# 3. Establece directorio de trabajo y copia el código
 WORKDIR /app
 COPY . .
 
+# 4. Descarga el modelo HDF5 desde tu Release en GitHub
+#    Reemplaza esta URL por la tuya tal como la ves en "Assets" de tu release
+ARG MODEL_URL=https://github.com/LGabo08/AlgoritmoCNN_Cogollero/releases/download/v1.0/cnn_model_fases.h5
+RUN mkdir -p ./modelo \
+ && echo "=> Descargando modelo desde $MODEL_URL" \
+ && curl -L "$MODEL_URL" -o ./modelo/cnn_model_fases.h5
 
-
-# 5. Crea un venv y instala deps
+# 5. Crea y activa un venv, luego instala dependencias Python
 RUN python -m venv /opt/venv \
  && . /opt/venv/bin/activate \
  && pip install --upgrade pip \
  && pip install -r requirements.txt
 
-# 6. Asegúrate de usar ese venv
+# 6. Asegúrate de usar el venv para ejecutar los comandos siguientes
 ENV PATH="/opt/venv/bin:$PATH"
 
-# 7. Exponer el puerto y lanzar tu app
+# 7. Expone el puerto que usas en Railway y lanza la app con Gunicorn
+#    Fíjate que ahora usamos gunicorn, más robusto en producción
+RUN pip install gunicorn
 EXPOSE 5000
-CMD ["python", "api/app.py"]
+CMD ["gunicorn", "api.app:app", "--bind", "0.0.0.0:5000"]
