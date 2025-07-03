@@ -7,6 +7,7 @@ from flask_cors import CORS
 from tensorflow.keras.preprocessing import image
 import numpy as np
 import tensorflow as tf
+import requests
 
 # 1) Carga variables de entorno desde .env (en local) o desde configuración de Railway
 load_dotenv()
@@ -21,7 +22,19 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# 3) Carga el modelo desde la ruta configurada
+# 3) Si MODEL_PATH es una URL, descargar el .h5 a un fichero temporal
+if MODEL_PATH.startswith(('http://', 'https://')):
+    logger.info(f'Descargando modelo desde URL: {MODEL_PATH}')
+    resp = requests.get(MODEL_PATH, stream=True)
+    resp.raise_for_status()
+    tmp = tempfile.NamedTemporaryFile(suffix=".h5", delete=False)
+    for chunk in resp.iter_content(chunk_size=8192):
+        tmp.write(chunk)
+    tmp.close()
+    MODEL_PATH = tmp.name
+    logger.info(f'Modelo descargado a: {MODEL_PATH}')
+
+# 4) Carga el modelo desde la ruta configurada
 logger.info(f'Loading model from: {MODEL_PATH}')
 model = tf.keras.models.load_model(MODEL_PATH)
 
@@ -34,7 +47,7 @@ CLASS_LABELS = {
     4: "crítica"
 }
 
-# 4) Inicializa Flask
+# 5) Inicializa Flask
 app = Flask(__name__)
 CORS(app)
 
@@ -99,5 +112,5 @@ def predict():
     })
 
 if __name__ == '__main__':
-    # 5) Arranca el servidor con las vars de entorno
+    # 6) Arranca el servidor con las vars de entorno
     app.run(host='0.0.0.0', port=PORT, debug=DEBUG)
