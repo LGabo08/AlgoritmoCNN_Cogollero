@@ -20,8 +20,7 @@ RUN apt-get update \
 WORKDIR /app
 COPY . .
 
-# 4. Haz pull de los modelos LFS
-RUN git lfs pull --include="modelo/*.h5"
+
 
 # 5. Crea un venv y instala deps
 RUN python -m venv /opt/venv \
