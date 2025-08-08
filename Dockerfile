@@ -1,6 +1,6 @@
 # 1. Base oficial de Python
 FROM python:3.10-slim
-
+#gg
 # 2. Instala dependencias APT mínimas
 RUN apt-get update \
  && apt-get install -y --no-install-recommends \
